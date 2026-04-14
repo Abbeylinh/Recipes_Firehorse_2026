@@ -1,1 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire Horse 2026 — Derby Day Kitchen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Bebas+Neue&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#8B0000; --red2:#C41E3A; --gold:#C9A84C; --gold2:#E8C97A;
+  --dark:#0D0A08; --charcoal:#1A1410;
+  --text:#2D1810; --muted:#777; --light:#FFF8F5;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#faf6f0;color:var(--text);font-family:'Crimson Text',serif;}
+
+/* HEADER */
+header{background:var(--dark);padding:1.4rem 2rem 1.1rem;text-align:center;border-bottom:3px solid var(--gold);}
+header .eyebrow{font-family:'Bebas Neue',sans-serif;font-size:0.72rem;letter-spacing:0.4em;color:var(--gold);margin-bottom:0.35rem;}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:900;color:var(--gold2);line-height:1;margin-bottom:0.25rem;}
+header p{font-family:'Crimson Text',serif;font-style:italic;color:#aaa;font-size:0.92rem;}
+
+/* TOP NAV — SECTION TABS */
+.top-nav{background:#1a0a05;padding:0.5rem 1rem;display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;border-bottom:2px solid var(--gold);}
+.top-nav a{font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:0.2em;color:var(--gold2);text-decoration:none;padding:0.4rem 1.2rem;border:1px solid rgba(201,168,76,0.4);transition:all 0.2s;}
+.top-nav a:hover,.top-nav a.active{background:var(--gold);color:var(--dark);}
+
+/* RECIPE SUB-NAV */
+.recipe-nav{background:var(--charcoal);padding:0.5rem 0.8rem;display:none;flex-wrap:wrap;gap:0.35rem;justify-content:center;border-bottom:1px solid rgba(201,168,76,0.25);}
+.recipe-nav.visible{display:flex;}
+.recipe-nav a{font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:0.1em;color:var(--gold);text-decoration:none;padding:0.28rem 0.6rem;border:1px solid rgba(201,168,76,0.25);transition:all 0.2s;white-space:nowrap;}
+.recipe-nav a:hover,.recipe-nav a.active{background:var(--gold);color:var(--dark);}
+.nav-num{opacity:0.55;margin-right:0.2rem;}
+
+main{max-width:920px;margin:0 auto;padding:1.5rem 1.5rem 4rem;}
+
+/* SECTION VISIBILITY */
+.section{display:none;}
+.section.active{display:block;}
+.recipe{display:none;}
+.recipe.active{display:block;}
+
+/* SHARED RECIPE STYLES */
+.recipe-header{margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:2px solid var(--gold);}
+.recipe-number{font-family:'Bebas Neue',sans-serif;font-size:0.72rem;letter-spacing:0.28em;color:var(--gold);margin-bottom:0.25rem;}
+.recipe-header h2{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,4vw,2.1rem);font-weight:900;color:var(--red);margin-bottom:0.25rem;}
+.recipe-header .tagline{font-family:'Crimson Text',serif;font-style:italic;color:var(--gold);font-size:1.02rem;margin-bottom:0.35rem;}
+.recipe-header .serves{font-family:'Bebas Neue',sans-serif;font-size:0.68rem;letter-spacing:0.14em;color:var(--muted);}
+.two-col{display:grid;grid-template-columns:1fr 1.7fr;gap:2rem;}
+@media(max-width:620px){.two-col{grid-template-columns:1fr;}}
+.sec-label{font-family:'Bebas Neue',sans-serif;font-size:0.76rem;letter-spacing:0.22em;color:var(--red2);margin-bottom:0.55rem;padding-bottom:0.3rem;border-bottom:1px solid rgba(201,168,76,0.22);}
+.ing-section{margin-bottom:0.75rem;}
+.ing-section .sub-label{font-family:'Bebas Neue',sans-serif;font-size:0.67rem;letter-spacing:0.13em;color:var(--gold);margin:0.7rem 0 0.25rem 0;}
+ul.ings{list-style:none;}
+ul.ings li{font-size:0.96rem;padding:0.2rem 0 0.2rem 1rem;border-bottom:1px solid rgba(0,0,0,0.04);}
+ul.ings li::before{content:'\2022';color:var(--gold);font-size:0.72rem;margin-right:0.45rem;}
+.steps{counter-reset:step;}
+.step{margin-bottom:0.85rem;padding-left:2.1rem;position:relative;}
+.step::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0.1rem;width:1.55rem;height:1.55rem;background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;display:flex;align-items:center;justify-content:center;border-radius:2px;}
+.step-title{font-family:'Crimson Text',serif;font-weight:600;font-size:0.96rem;color:var(--red2);margin-bottom:0.12rem;}
+.step-body{font-family:'Crimson Text',serif;font-size:0.94rem;line-height:1.62;color:#444;}
+.notes-box{background:var(--light);border-left:3px solid var(--gold);padding:0.85rem 1rem;margin-top:1.3rem;border-radius:0 4px 4px 0;}
+.note-item{font-style:italic;font-size:0.9rem;color:var(--muted);line-height:1.58;margin-bottom:0.45rem;padding-left:1.1rem;position:relative;}
+.note-item::before{content:'\26a0';position:absolute;left:0;color:var(--gold);}
+
+/* MENU STYLES */
+.menu-section-head{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.3em;color:var(--red);margin:2rem 0 0.3rem;padding-bottom:0.4rem;border-bottom:2px solid var(--gold);}
+.menu-service-note{font-style:italic;font-size:0.88rem;color:var(--muted);margin-bottom:1rem;}
+.menu-item{margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px solid rgba(0,0,0,0.06);}
+.menu-item:last-child{border-bottom:none;}
+.menu-item-name{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--red2);margin-bottom:0.2rem;}
+.menu-item-desc{font-style:italic;font-size:0.97rem;color:#555;margin-bottom:0.35rem;line-height:1.55;}
+.menu-station-note{font-size:0.88rem;color:var(--muted);margin:0.15rem 0 0 1rem;padding-left:0.8rem;border-left:2px solid var(--gold);}
+.service-grid{display:grid;grid-template-columns:auto 1fr;gap:0.3rem 1rem;margin-bottom:1.5rem;}
+.stime{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--red2);white-space:nowrap;}
+.sdesc{font-size:0.97rem;color:#444;padding-top:0.05rem;}
+.kitchen-note-row{font-size:0.96rem;color:#333;margin-bottom:0.5rem;padding-left:1rem;position:relative;}
+.kitchen-note-row::before{content:'\00b7';position:absolute;left:0;color:var(--gold);font-weight:bold;}
+
+/* ORDER LIST STYLES */
+.order-section-head{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.28em;color:var(--red);margin:1.8rem 0 0.4rem;padding-bottom:0.35rem;border-bottom:2px solid var(--gold);}
+.order-note{font-style:italic;font-size:0.88rem;color:var(--muted);margin-bottom:0.8rem;line-height:1.5;}
+table.order-table{width:100%;border-collapse:collapse;margin-bottom:1.2rem;font-size:0.9rem;}
+table.order-table th{background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.15em;padding:0.5rem 0.7rem;text-align:left;}
+table.order-table td{padding:0.45rem 0.7rem;border-bottom:1px solid #e8e0d8;vertical-align:top;line-height:1.45;}
+table.order-table tr:nth-child(even) td{background:#fff5f0;}
+table.order-table .who-abbey{font-family:'Bebas Neue',sans-serif;font-size:0.75rem;color:var(--red);letter-spacing:0.1em;}
+table.order-table .who-seth{color:#555;font-size:0.88rem;}
+
+footer{background:var(--dark);text-align:center;padding:1.1rem;border-top:2px solid var(--gold);}
+footer p{font-style:italic;color:var(--gold);font-size:0.86rem;}
+footer p+p{margin-top:0.25rem;color:#555;font-size:0.76rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Three Finger Jack's &nbsp;&middot;&nbsp; Winthrop, WA &nbsp;&middot;&nbsp; Saturday May 2, 2026</p>
+  <h1>Fire Horse 2026</h1>
+  <p>Derby Day Kitchen Reference &nbsp;&middot;&nbsp; ~60 Guests &nbsp;&middot;&nbsp; Abbey Bennett &nbsp;&middot;&nbsp; 206-713-1720</p>
+</header>
+
+<div class="top-nav">
+  <a href="#" class="active" onclick="showSection('menu',this)">Menu</a>
+  <a href="#" onclick="showSection('order',this)">Food Order List</a>
+  <a href="#" onclick="showSection('recipes',this)">Recipes</a>
+</div>
+
+<div class="recipe-nav" id="recipe-nav">
+  <a href="#" class="active" onclick="showRecipe('r00',this)"><span class="nav-num">00</span>Pimento Cheese</a>
+  <a href="#" onclick="showRecipe('r01',this)"><span class="nav-num">01</span>Baked Beans</a>
+  <a href="#" onclick="showRecipe('r02',this)"><span class="nav-num">02</span>Beer Cheese</a>
+  <a href="#" onclick="showRecipe('r03',this)"><span class="nav-num">03</span>Quick Pickles</a>
+  <a href="#" onclick="showRecipe('r05',this)"><span class="nav-num">05</span>Candied Bacon</a>
+  <a href="#" onclick="showRecipe('r04',this)"><span class="nav-num">04</span>Deviled Eggs</a>
+  <a href="#" onclick="showRecipe('r06',this)"><span class="nav-num">06</span>Piedmont Slaw</a>
+  <a href="#" onclick="showRecipe('r07',this)"><span class="nav-num">07</span>Pulled Pork</a>
+  <a href="#" onclick="showRecipe('r08',this)"><span class="nav-num">08</span>Cajun Shrimp</a>
+</div>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- MENU SECTION -->
+<!-- ============================================================ -->
+<div class="section active" id="section-menu">
+
+  <div style="text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--gold);">
+    <p style="font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.35em;color:var(--gold);margin-bottom:0.3rem;">FIRE HORSE 2026 &nbsp;&middot;&nbsp; KENTUCKY DERBY DAY &nbsp;&middot;&nbsp; SOUTHERN FEAST</p>
+    <p style="font-family:'Playfair Display',serif;font-size:clamp(1.1rem,3vw,1.5rem);color:var(--red);font-weight:700;">Three Finger Jack's &nbsp;&middot;&nbsp; Winthrop, WA &nbsp;&middot;&nbsp; Saturday May 2, 2026</p>
+    <p style="font-style:italic;color:var(--muted);font-size:0.9rem;margin-top:0.3rem;">Approximately 60 Guests &nbsp;&middot;&nbsp; 1:00&ndash;5:00 PM &nbsp;&middot;&nbsp; Derby Post Time 3:57 PM Pacific &nbsp;&middot;&nbsp; Live on NBC &amp; Peacock</p>
+  </div>
+
+  <p class="menu-section-head">Service Overview</p>
+  <div class="service-grid">
+    <span class="stime">1:00 PM</span><span class="sdesc">Doors open &nbsp;&middot;&nbsp; Bar opens &nbsp;&middot;&nbsp; Pimento boards and deviled eggs on table</span>
+    <span class="stime">1:30 PM</span><span class="sdesc">Full feast table opens &nbsp;&middot;&nbsp; All food service begins</span>
+    <span class="stime">3:30 PM</span><span class="sdesc">Food service closes &nbsp;&middot;&nbsp; Table cleared &nbsp;&middot;&nbsp; Guests gather for Derby</span>
+    <span class="stime">3:57 PM</span><span class="sdesc">152nd Kentucky Derby &nbsp;&middot;&nbsp; Live broadcast on projector</span>
+    <span class="stime">4:00 PM</span><span class="sdesc">Dessert drops &nbsp;&middot;&nbsp; Bets paid out &nbsp;&middot;&nbsp; Wind down</span>
+  </div>
+
+  <p class="menu-section-head">Grazing Table</p>
+  <p class="menu-service-note">Self-serve &nbsp;&middot;&nbsp; On table from 1:30 PM &nbsp;&middot;&nbsp; Pimento boards and deviled eggs out from 1:00 PM &nbsp;&middot;&nbsp; Restocked throughout service</p>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Pimento Cheese Boards</p>
+    <p class="menu-item-desc">House-made sharp cheddar and cream cheese spread with diced pimentos, smoked paprika, and a whisper of hot sauce</p>
+    <p class="menu-station-note">4 x 12&ndash;16&quot; slate boards &nbsp;&middot;&nbsp; cheese crock centered &nbsp;&middot;&nbsp; butter crackers, water crackers, Texas toast points, celery sticks, bread &amp; butter pickles, pickled okra arranged around</p>
+    <p class="menu-station-note">Kentucky beer cheese warm crock alongside &nbsp;&middot;&nbsp; soft pretzel bites for dipping &nbsp;&middot;&nbsp; hot honey drizzle</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Deviled Eggs Three Ways</p>
+    <p class="menu-item-desc">Classic Southern deviled eggs in three variations &mdash; all made the day before, garnished morning of</p>
+    <p class="menu-station-note">Variation 1: candied bacon crumble and smoked paprika</p>
+    <p class="menu-station-note">Variation 2: pickled jalape&ntilde;o slice and fresh chive</p>
+    <p class="menu-station-note">Variation 3: whole grain mustard and fresh dill &nbsp;&middot;&nbsp; classic preparation</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Candied Bacon Twists</p>
+    <p class="menu-item-desc">Thick-cut bacon glazed with brown sugar, cracked black pepper, and cayenne &nbsp;&middot;&nbsp; baked until lacquered and twisted &nbsp;&middot;&nbsp; served upright in wide-mouth mason jars</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Cajun Shrimp</p>
+    <p class="menu-item-desc">Gulf shrimp pan-seared in cajun spiced brown butter with garlic and lemon &nbsp;&middot;&nbsp; served in a wide shallow bowl at room temperature with house remoulade and fresh lemon wedges</p>
+    <p class="menu-station-note">21&ndash;25 count &nbsp;&middot;&nbsp; 8 lbs &nbsp;&middot;&nbsp; pan fried in two batches &nbsp;&middot;&nbsp; wide shallow bowl presentation &nbsp;&middot;&nbsp; no chafing dish</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Smoked Kielbasa</p>
+    <p class="menu-item-desc">Grilled smoked sausage sliced thick &nbsp;&middot;&nbsp; served warm on a butcher board with house bourbon mustard, bread &amp; butter pickles, and Texas toast points</p>
+    <p class="menu-station-note">Grilled day before &nbsp;&middot;&nbsp; reheated in cast iron day of &nbsp;&middot;&nbsp; cast iron on trivet on butcher board &nbsp;&middot;&nbsp; warm presentation</p>
+  </div>
+
+  <p class="menu-section-head">Mains</p>
+  <p class="menu-service-note">Self-serve feast table &nbsp;&middot;&nbsp; Wave service for shrimp and bologna &nbsp;&middot;&nbsp; Pulled pork and baked beans held warm in chafing dishes all afternoon</p>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Bourbon Pulled Pork</p>
+    <p class="menu-item-desc">Pork shoulder slow-cooked overnight with bourbon, apple cider vinegar, smoked paprika, and cayenne &nbsp;&middot;&nbsp; tangy forward, not sweet &nbsp;&middot;&nbsp; pulled into long silky strands</p>
+    <p class="menu-station-note">Chafing dish &nbsp;&middot;&nbsp; Martin&rsquo;s potato rolls stacked alongside &nbsp;&middot;&nbsp; Lexington Piedmont slaw in small bowl &nbsp;&middot;&nbsp; guests build their own slider</p>
+    <p class="menu-station-note">Chalkboard label: Bourbon Pulled Pork &nbsp;&middot;&nbsp; Build Your Own Slider</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Lexington Piedmont Slaw</p>
+    <p class="menu-item-desc">Finely chopped cabbage dressed with ketchup, apple cider vinegar, celery seed, and a touch of heat &nbsp;&middot;&nbsp; the authentic North Carolina accompaniment to pulled pork &nbsp;&middot;&nbsp; not a standalone side</p>
+    <p class="menu-station-note">Small bowl alongside pulled pork chafing dish &nbsp;&middot;&nbsp; condiment not a side dish</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Fried Bologna Sandwich</p>
+    <p class="menu-item-desc">Thick-cut beef bologna scored and seared in cast iron until the edges cup and char &nbsp;&middot;&nbsp; served as half sandwiches on Texas toast with classic yellow mustard and housemade quick pickles &nbsp;&middot;&nbsp; a Louisville lunchroom legend</p>
+    <p class="menu-station-note">Fried to order in waves &nbsp;&middot;&nbsp; Wave 1 at 1:30 PM &nbsp;&middot;&nbsp; Wave 2 at 2:30 PM &nbsp;&middot;&nbsp; limited quantities &nbsp;&middot;&nbsp; half sandwiches on platter</p>
+    <p class="menu-station-note">Texas toast &nbsp;&middot;&nbsp; yellow mustard in squeeze bottle &nbsp;&middot;&nbsp; quick pickles in small ramekin alongside</p>
+  </div>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Bourbon Baked Beans</p>
+    <p class="menu-item-desc">Navy beans slow-cooked with bourbon, thick-cut bacon, brown sugar, molasses, stone ground mustard, and apple cider vinegar &nbsp;&middot;&nbsp; smoky, tangy, and deeply savory &nbsp;&middot;&nbsp; held warm all afternoon</p>
+    <p class="menu-station-note">Chafing dish &nbsp;&middot;&nbsp; set and forget &nbsp;&middot;&nbsp; stir every 30&ndash;40 minutes &nbsp;&middot;&nbsp; add splash of water if they tighten</p>
+  </div>
+
+  <p class="menu-section-head">Desserts</p>
+  <p class="menu-service-note">Revealed after the race &nbsp;&middot;&nbsp; Served 4:00&ndash;5:00 PM &nbsp;&middot;&nbsp; Fully outsourced by Abbey &nbsp;&middot;&nbsp; Delivered day of event &nbsp;&middot;&nbsp; Seth provides strawberries and 1 quart heavy cream only</p>
+
+  <div class="menu-item">
+    <p class="menu-item-name">Mini Pecan Pies</p>
+    <p class="menu-item-desc">Individual butter crust shells filled with dark corn syrup, brown sugar, toasted pecans, and vanilla &nbsp;&middot;&nbsp; 60 individual pies on tiered stand</p>
+  </div>
+  <div class="menu-item">
+    <p class="menu-item-name">Mini Derby Pies</p>
+    <p class="menu-item-desc">Buttery crust filled with bourbon-spiked chocolate and walnut custard &nbsp;&middot;&nbsp; Kentucky&rsquo;s most beloved bar cookie in pie form &nbsp;&middot;&nbsp; 60 individual pies</p>
+  </div>
+  <div class="menu-item">
+    <p class="menu-item-name">Banana Pudding Shooters</p>
+    <p class="menu-item-desc">Layers of vanilla bean pudding, fresh banana, and crushed Nilla wafers &nbsp;&middot;&nbsp; topped with stabilized bourbon vanilla whipped cream rosette &nbsp;&middot;&nbsp; 90 individual 2oz cups</p>
+  </div>
+  <div class="menu-item">
+    <p class="menu-item-name">Strawberries &amp; Bourbon Whipped Cream</p>
+    <p class="menu-item-desc">Fresh strawberries alongside a generous crock of hand-whipped cream spiked with bourbon and vanilla &nbsp;&middot;&nbsp; Seth whips the cream day of</p>
+    <p class="menu-station-note">Seth provides: 2&ndash;3 lbs fresh strawberries &nbsp;&middot;&nbsp; 1 quart heavy cream</p>
+  </div>
+
+  <p class="menu-section-head">Signature Cocktails</p>
+  <p class="menu-service-note">Dedicated bartender at the bar all afternoon &nbsp;&middot;&nbsp; 2 drink tickets per guest included &nbsp;&middot;&nbsp; $8 per drink after tickets</p>
+  <div class="menu-item">
+    <p class="menu-item-name">Mint Julep</p>
+    <p class="menu-item-desc">Bourbon, fresh mint, simple syrup, and crushed ice &nbsp;&middot;&nbsp; served in a silver cup &nbsp;&middot;&nbsp; the official drink of the Kentucky Derby since 1938</p>
+  </div>
+  <div class="menu-item">
+    <p class="menu-item-name">Gin Rickey</p>
+    <p class="menu-item-desc">Gin, fresh lime juice, and sparkling water &nbsp;&middot;&nbsp; light, crisp, and ice cold &nbsp;&middot;&nbsp; garnish with pickled okra</p>
+  </div>
+  <div class="menu-item">
+    <p class="menu-item-name">Oaks Lily</p>
+    <p class="menu-item-desc">Vodka, triple sec, sweet and sour, and cranberry juice &nbsp;&middot;&nbsp; the official cocktail of the Kentucky Oaks &nbsp;&middot;&nbsp; bright and built for a celebration</p>
+  </div>
+
+  <p class="menu-section-head">Kitchen Notes for Seth</p>
+  <p class="kitchen-note-row"><strong>Staffing confirmed:</strong> 2 kitchen staff &nbsp;&middot;&nbsp; 1 bartender &nbsp;&middot;&nbsp; 1 busser/barback</p>
+  <p class="kitchen-note-row"><strong>Make ahead:</strong> Baked beans &nbsp;&middot;&nbsp; deviled eggs &nbsp;&middot;&nbsp; pimento cheese &nbsp;&middot;&nbsp; beer cheese &nbsp;&middot;&nbsp; bourbon mustard &nbsp;&middot;&nbsp; remoulade &nbsp;&middot;&nbsp; quick pickles &nbsp;&middot;&nbsp; candied bacon twists &nbsp;&middot;&nbsp; Piedmont slaw &nbsp;&middot;&nbsp; all made day before</p>
+  <p class="kitchen-note-row"><strong>Overnight:</strong> Pulled pork slow cooks overnight &nbsp;&middot;&nbsp; pull and shred morning of event</p>
+  <p class="kitchen-note-row"><strong>Day of waves:</strong> Cajun shrimp &nbsp;&middot;&nbsp; Wave 1 at 1:30 PM &nbsp;&middot;&nbsp; Wave 2 at 2:30 PM</p>
+  <p class="kitchen-note-row"><strong>Day of waves:</strong> Fried bologna &nbsp;&middot;&nbsp; Wave 1 at 1:30 PM &nbsp;&middot;&nbsp; Wave 2 at 2:30 PM &nbsp;&middot;&nbsp; fried to order in cast iron &nbsp;&middot;&nbsp; half sandwiches on platter</p>
+  <p class="kitchen-note-row"><strong>Chafing dishes needed:</strong> Pulled pork &nbsp;&middot;&nbsp; Bourbon baked beans &nbsp;&middot;&nbsp; Beer cheese warm crock</p>
+  <p class="kitchen-note-row"><strong>Cast iron needed:</strong> Kielbasa reheat on trivet on butcher board &nbsp;&middot;&nbsp; Bologna frying</p>
+  <p class="kitchen-note-row"><strong>Shrimp:</strong> ORDER 21&ndash;25 COUNT &nbsp;&middot;&nbsp; 8 lbs &nbsp;&middot;&nbsp; wide shallow bowl presentation &nbsp;&middot;&nbsp; no chafing dish &nbsp;&middot;&nbsp; room temperature service</p>
+  <p class="kitchen-note-row"><strong>Food service closes:</strong> 3:30 PM sharp &nbsp;&middot;&nbsp; all food pulled from table &nbsp;&middot;&nbsp; 2-hour window keeps everything within safe zone</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- ORDER LIST SECTION -->
+<!-- ============================================================ -->
+<div class="section" id="section-order">
+
+  <div style="text-align:center;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:2px solid var(--gold);">
+    <p style="font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.35em;color:var(--gold);margin-bottom:0.3rem;">FIRE HORSE 2026 &nbsp;&middot;&nbsp; DERBY DAY</p>
+    <p style="font-family:'Playfair Display',serif;font-size:clamp(1.1rem,3vw,1.5rem);color:var(--red);font-weight:700;">Food Order List</p>
+    <p style="font-style:italic;color:var(--muted);font-size:0.88rem;margin-top:0.25rem;">Three Finger Jack&rsquo;s &nbsp;&middot;&nbsp; ~60 Guests &nbsp;&middot;&nbsp; Saturday May 2, 2026 &nbsp;&middot;&nbsp; Abbey Bennett &nbsp;&middot;&nbsp; 206-713-1720</p>
+  </div>
+
+  <p class="order-note">Items marked <strong>ABBEY</strong> are purchased and delivered by Abbey. Do not order these. Desserts are fully outsourced by Abbey &mdash; Seth provides strawberries and heavy cream only.</p>
+
+  <p class="order-section-head">Proteins &amp; Meat</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th><th>Who</th></tr>
+    <tr><td>Beef bologna chub</td><td>2 x 4 lbs = 8 lbs total</td><td>Halal Fresh Beef Bologna &mdash; Costco. Slice 3/4&ndash;1 inch thick, score edges. Served as half sandwiches on Texas toast.</td><td class="who-abbey">ABBEY</td></tr>
+    <tr><td>Pork shoulder / Boston butt</td><td>28&ndash;30 lbs raw &middot; 2&ndash;3 shoulders</td><td>Bone-in preferred. Slow cook overnight. ~60% yield = ~17 lbs cooked for 90 sliders at 3oz each. Multiple slow cookers needed.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Kielbasa / smoked sausage</td><td>5&ndash;6 lbs &middot; 4&ndash;5 links</td><td>Grill day before. Reheat in cast iron day of. Cast iron on trivet on butcher board. Warm presentation. Slice thick.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Bacon &mdash; thick cut &middot; candied twists</td><td>8 lbs</td><td>Thick cut only. Each strip becomes one twist. Baked with brown sugar and cayenne day before event.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Bacon &mdash; regular cut &middot; baked beans</td><td>2&ndash;3 lbs</td><td>Regular cut &mdash; NOT thick cut. Diced and rendered into beans. Regular cut integrates better into the sauce.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Cajun shrimp</td><td>8 lbs</td><td><strong>ORDER 21&ndash;25 COUNT SPECIFICALLY.</strong> Peeled and deveined. Pan fried in cajun butter in two batches. Wide shallow bowl at room temperature. No chafing dish.</td><td class="who-seth">Seth</td></tr>
+  </table>
+
+  <p class="order-section-head">Dairy &amp; Eggs</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th><th>Who</th></tr>
+    <tr><td>Eggs</td><td>8 dozen</td><td>90 whole eggs for deviled eggs &mdash; 8 dozen allows for cracking losses.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Butter</td><td>2 lbs</td><td>Cajun brown butter for shrimp, general cooking. Unsalted preferred.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Heavy cream</td><td>1 quart</td><td>Bourbon whipped cream for dessert station only. Whipped day of event.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Cream cheese &mdash; block</td><td>2 x 8oz blocks</td><td>1 block pimento cheese &middot; 1 block beer cheese. Block form only &mdash; not whipped or spreadable.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Sharp cheddar &mdash; shred fresh</td><td>3 lbs</td><td>1.5 lbs pimento cheese &middot; 1 lb beer cheese &middot; 0.5 lb buffer. Shred fresh &mdash; never pre-shredded.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Mayonnaise</td><td>3 quarts</td><td>Pimento cheese, deviled egg filling (large batch for 90 eggs), remoulade sauce.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Sour cream</td><td>1 pint</td><td>Deviled egg filling &mdash; adds richness and tang.</td><td class="who-seth">Seth</td></tr>
+  </table>
+
+  <p class="order-section-head">Bread &amp; Baked Goods</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th><th>Who</th></tr>
+    <tr><td>Texas toast &mdash; thick sliced</td><td>7 loaves</td><td>Bologna sandwiches, pimento board toast points across 4 boards, kielbasa station accompaniment.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Martin&rsquo;s potato slider rolls</td><td>8 packs of 12 = 96 rolls</td><td>Pulled pork build-your-own station. Martin&rsquo;s specifically &mdash; soft, slightly sweet, correct size.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Soft pretzel bites</td><td>4&ndash;5 lbs &middot; ~160 bites</td><td>Alongside Kentucky beer cheese warm crock. Frozen reheat is perfectly fine.</td><td class="who-seth">Seth</td></tr>
+  </table>
+
+  <p class="order-section-head">Pantry &amp; Condiments</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th><th>Who</th></tr>
+    <tr><td>Bourbon</td><td>2 x 750ml</td><td>Pulled pork, baked beans, bourbon mustard, bourbon whipped cream. Well bourbon fine.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Brown sugar</td><td>3 lbs</td><td>Candied bacon twists, pulled pork dry rub, baked beans.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Molasses</td><td>1 bottle</td><td>Baked beans &mdash; adds depth, color, and slight bitterness.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Dijon mustard</td><td>1 jar</td><td>Bourbon mustard for kielbasa station, beer cheese base, remoulade sauce.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Stone ground mustard</td><td>1 jar</td><td>Beer cheese and baked beans.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Yellow mustard</td><td>1 bottle</td><td>Fried bologna sandwiches only. Classic yellow &mdash; not dijon.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Hot honey</td><td>1 bottle</td><td>Pimento cheese board drizzle.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Cajun seasoning</td><td>1 large container</td><td>Shrimp pan fry and deviled egg jalape&ntilde;o variation.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Smoked paprika</td><td>1 jar</td><td>Pulled pork dry rub, deviled egg garnish, pimento cheese dusting.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Cayenne pepper</td><td>1 jar</td><td>Candied bacon, pulled pork, baked beans, beer cheese.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Garlic powder</td><td>1 jar</td><td>Pulled pork dry rub.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Onion powder</td><td>1 jar</td><td>Pulled pork dry rub.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Hot sauce</td><td>1 bottle</td><td>Deviled egg filling, pimento cheese, beer cheese, remoulade, pulled pork braise.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Worcestershire sauce</td><td>1 bottle</td><td>Deviled egg filling, remoulade sauce, baked beans.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>All-purpose flour</td><td>2 lbs</td><td>Beer cheese roux base, general cooking.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Apple cider vinegar</td><td>2 x large bottles (64oz total)</td><td>Pulled pork, baked beans, quick pickles, Piedmont slaw. Buy large &mdash; used across multiple recipes.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Navy or Great Northern beans</td><td>4 x 28oz cans</td><td>Baked beans base. 4 x 28oz fills one chafing dish properly. Drain and rinse before using.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Ketchup</td><td>1 bottle</td><td>Baked beans base and Piedmont slaw dressing.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Pickle juice</td><td>1 jar</td><td>Quick pickles brine for bologna sandwiches.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Sugar</td><td>2 lbs</td><td>Quick pickle brine, Piedmont slaw dressing, general use.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Vanilla extract</td><td>1 bottle</td><td>Bourbon whipped cream for dessert station.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Craft beer</td><td>2 x 12oz cans</td><td>Kentucky beer cheese base. Amber ale or lager &mdash; nothing too hoppy.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Celery seed</td><td>1 jar</td><td>Quick pickles and Piedmont slaw dressing. One jar covers both.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Mustard seed</td><td>1 jar</td><td>Quick pickles for bologna sandwiches.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Red pepper flakes</td><td>1 jar</td><td>Piedmont slaw dressing heat element.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Kosher salt</td><td>1 box</td><td>Pulled pork dry rub, deviled egg salting step, general seasoning.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Black pepper &mdash; cracked or whole</td><td>1 jar</td><td>Pulled pork dry rub, quick pickles, general seasoning.</td><td class="who-seth">Seth</td></tr>
+  </table>
+
+  <p class="order-section-head">Produce &amp; Fresh Items</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th><th>Who</th></tr>
+    <tr><td>Strawberries</td><td>2&ndash;3 lbs</td><td>Dessert station alongside bourbon whipped cream.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Lemons</td><td>8&ndash;10</td><td>Wedges alongside cajun shrimp bowl.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Limes</td><td>10</td><td>Gin Rickey cocktail. Bar use only.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Fresh parsley &mdash; flat leaf</td><td>8 bunches</td><td>Chopped garnish for shrimp bowl and general plating.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Fresh chives</td><td>3 bunches</td><td>Deviled egg garnish &mdash; jalape&ntilde;o variation and classic variation.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Fresh dill</td><td>2 small bunches</td><td>Deviled egg classic variation garnish.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Fresh mint</td><td>4 bunches</td><td>Mint Julep cocktail. Bar use only. Keep cold and dry until service.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Cucumbers</td><td>6 medium</td><td>Quick pickles for bologna sandwiches. Slice thin &mdash; 1/8 inch rounds.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Garlic &mdash; fresh</td><td>4 heads</td><td>Cajun butter for shrimp, beer cheese, pulled pork, baked beans, remoulade. Fresh only &mdash; not pre-minced.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Celery</td><td>5 bunches</td><td>Pimento cheese board dipper across 4 boards restocked over 2 hours. Slice into sticks, refresh in ice water before service.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Green cabbage</td><td>1 medium head</td><td>Piedmont slaw base. Finely chopped &mdash; not shredded.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Red cabbage</td><td>1 small head</td><td>Piedmont slaw color. Optional but recommended.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>White onion</td><td>1 small</td><td>Quick pickles for bologna sandwiches. Slice paper thin.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Carrots</td><td>3&ndash;4 medium</td><td>Optional addition to Piedmont slaw for color and sweetness.</td><td class="who-seth">Seth</td></tr>
+  </table>
+
+  <p class="order-section-head">Pimento Boards &mdash; Additional Items</p>
+  <p class="order-note">4 boards total &mdash; 2 per pool table. All board items must have enough volume for restocking across a 2-hour service window.</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th><th>Who</th></tr>
+    <tr><td>Pimentos &mdash; jarred diced</td><td>3 x 4oz jars</td><td>2 jars for pimento cheese base &middot; 1 jar reserved for garnish on top of crocks.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Butter crackers &mdash; Ritz or Club</td><td>12 sleeves</td><td>Primary cracker across 4 boards restocked over 2 hours.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Water crackers</td><td>6 sleeves</td><td>Secondary cracker variety alongside butter crackers.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Bread &amp; butter pickles</td><td>2&ndash;3 jars</td><td>Small pile on each of 4 boards. One jar is not enough across 4 boards over 2 hours.</td><td class="who-seth">Seth</td></tr>
+    <tr><td>Pickled okra</td><td>3&ndash;4 jars</td><td>1 jar per board for display and grazing &middot; 1 jar reserved for bar as gin rickey garnish.</td><td class="who-seth">Seth</td></tr>
+  </table>
+
+  <p class="order-section-head">Desserts &mdash; Fully Outsourced by Abbey</p>
+  <p class="order-note">Abbey sources all desserts from an outside bakery and delivers day of event. Seth&rsquo;s only dessert responsibilities are the two items below.</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Who</th></tr>
+    <tr><td>Mini pecan pies &mdash; individual</td><td>60</td><td class="who-abbey">ABBEY &mdash; outsourced bakery</td></tr>
+    <tr><td>Mini derby pies &mdash; individual</td><td>60</td><td class="who-abbey">ABBEY &mdash; outsourced bakery</td></tr>
+    <tr><td>Banana pudding shooters &mdash; 2oz cups</td><td>90</td><td class="who-abbey">ABBEY &mdash; outsourced bakery</td></tr>
+    <tr><td>Fresh strawberries</td><td>2&ndash;3 lbs</td><td class="who-seth">Seth &mdash; included in produce order above</td></tr>
+    <tr><td>Heavy cream</td><td>1 quart</td><td class="who-seth">Seth &mdash; included in dairy order above &middot; whipped with bourbon and vanilla day of</td></tr>
+  </table>
+
+  <p class="order-section-head">Abbey Provides &mdash; Do Not Order</p>
+  <table class="order-table">
+    <tr><th>Item</th><th>Quantity</th><th>Notes</th></tr>
+    <tr><td>Beef bologna chub</td><td>2 x 4 lbs = 8 lbs</td><td>Halal Fresh Beef Bologna &mdash; Costco. Delivered to Seth&rsquo;s kitchen day before event.</td></tr>
+    <tr><td>Slate boards 12x16 inch</td><td>4 boards</td><td>8&ndash;10mm thick minimum. Rubber feet required.</td></tr>
+    <tr><td>Quart mason jars &mdash; wide mouth</td><td>4&ndash;6</td><td>Candied bacon twists display.</td></tr>
+    <tr><td>Small chalkboard label cards</td><td>20+</td><td>Menu labels for every item on feast table.</td></tr>
+    <tr><td>Wooden display risers</td><td>14 boxes S/M/L + 2 trays</td><td>Built by Randy &mdash; arrive with Abbey day of setup.</td></tr>
+    <tr><td>Red tablecloths 90x132</td><td>2</td><td>One per pool table.</td></tr>
+    <tr><td>Trivet or heat-safe pad</td><td>1</td><td>For cast iron kielbasa presentation on butcher board.</td></tr>
+    <tr><td>Wristbands</td><td>60+</td><td>Event entry wristbands.</td></tr>
+    <tr><td>Drink tickets</td><td>120 total &middot; 2 per guest</td><td>$8 per drink &middot; 2 tickets per guest included.</td></tr>
+  </table>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- RECIPES SECTION -->
+<!-- ============================================================ -->
+<div class="section" id="section-recipes">
+
+<!-- 00 PIMENTO CHEESE -->
+<div class="recipe active" id="recipe-r00">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 00 &nbsp;&middot;&nbsp; MAKE 2 DAYS AHEAD</p>
+    <h2>Pimento Cheese</h2>
+    <p class="tagline">House-made sharp cheddar and cream cheese spread with diced pimentos, smoked paprika, and a whisper of hot sauce</p>
+    <p class="serves">MAKES 2.5 LBS &nbsp;&middot;&nbsp; SERVES 4 BOARDS FOR 60 GUESTS &nbsp;&middot;&nbsp; MAKE 2 DAYS AHEAD</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <div class="ing-section">
+        <ul class="ings">
+          <li>2.5 lbs sharp cheddar &mdash; shredded fresh, never pre-shredded</li>
+          <li>8 oz cream cheese &mdash; block form, softened to room temperature</li>
+          <li>1&frac12; cups mayonnaise</li>
+          <li>2 x 4oz jars diced pimentos &mdash; drained &middot; reserve 1 jar for garnish</li>
+          <li>1 tbsp hot sauce</li>
+          <li>3 tsp apple cider vinegar</li>
+          <li>2 tsp smoked paprika &mdash; plus more for dusting</li>
+          <li>2 tsp garlic powder</li>
+          <li>2 tsp onion powder</li>
+          <li>1 tsp cayenne pepper</li>
+          <li>1 tsp black pepper</li>
+          <li>Salt to taste</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Board Components &mdash; Per Board</p>
+        <ul class="ings">
+          <li>Butter crackers &mdash; Ritz or Club &middot; 2&ndash;3 sleeves per board</li>
+          <li>Water crackers &middot; 1 sleeve per board</li>
+          <li>Texas toast &mdash; lightly toasted, cut into triangles</li>
+          <li>Celery sticks &mdash; refreshed in ice water before service</li>
+          <li>Bread &amp; butter pickles &mdash; small pile</li>
+          <li>Pickled okra &mdash; standing upright on board</li>
+          <li>Hot honey &mdash; small drizzle alongside</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Shred the cheese</p><p class="step-body">Shred cheddar fresh using a box grater or food processor. Do not use pre-shredded &mdash; it has an anti-caking coating that prevents smooth blending and ruins the texture.</p></div>
+        <div class="step"><p class="step-title">Soften cream cheese</p><p class="step-body">Let cream cheese sit at room temperature for at least 30 minutes before mixing. Cold cream cheese will leave lumps that never fully incorporate.</p></div>
+        <div class="step"><p class="step-title">Mix the base</p><p class="step-body">In a large bowl combine softened cream cheese and mayonnaise. Beat with a hand mixer or wooden spoon until smooth and fully combined. No lumps.</p></div>
+        <div class="step"><p class="step-title">Add the cheddar</p><p class="step-body">Add shredded cheddar in two batches, folding in with a spatula between additions. The mixture will be thick and slightly chunky &mdash; that is correct. Do not over-mix into a paste.</p></div>
+        <div class="step"><p class="step-title">Season and add pimentos</p><p class="step-body">Add drained pimentos from 2 jars, hot sauce, ACV, smoked paprika, garlic powder, onion powder, cayenne, and black pepper. Fold gently. Taste &mdash; should be rich, tangy, slightly spicy. Adjust seasoning. Add salt if needed.</p></div>
+        <div class="step"><p class="step-title">Refrigerate overnight</p><p class="step-body">Transfer to airtight containers and refrigerate. Pimento cheese made 2 days ahead is significantly better than same-day. The flavors meld and the texture firms up to the ideal spreadable consistency.</p></div>
+        <div class="step"><p class="step-title">Assemble boards day of</p><p class="step-body">Pull from fridge 30 minutes before service. Scoop into a crock centered on each slate board. Dust top with smoked paprika. Scatter extra diced pimentos on top. Arrange crackers, celery, pickles, toast points, and pickled okra around the crock. Drizzle hot honey alongside. Beer cheese crock and pretzel bites go on the same board.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Make 2 days ahead &mdash; non-negotiable. Same-day pimento cheese is flat and one-dimensional. Two-day is a completely different and better product.</p>
+    <p class="note-item">Board tip: the crock should be centered and generous. Surround it abundantly &mdash; a sparse board looks cheap. Restock every 45&ndash;60 minutes.</p>
+    <p class="note-item">Pickled okra doubles as a gin rickey garnish at the bar &mdash; reserve 1 jar specifically for the bartender.</p>
+  </div>
+</div>
+
+<!-- 01 BAKED BEANS -->
+<div class="recipe" id="recipe-r01">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 01 &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE</p>
+    <h2>Bourbon Baked Beans</h2>
+    <p class="tagline">Navy beans slow-cooked with bourbon, bacon, molasses, and apple cider vinegar</p>
+    <p class="serves">SERVES ~60 GUESTS &nbsp;&middot;&nbsp; CHAFING DISH &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <div class="ing-section">
+        <ul class="ings">
+          <li>4 x 28oz cans navy or Great Northern beans &mdash; drained and rinsed</li>
+          <li>2.5 lbs regular cut bacon &mdash; diced into &frac12; inch pieces</li>
+          <li>&frac12; cup bourbon &mdash; EARLY (added to bacon)</li>
+          <li>&frac12; cup bourbon &mdash; TO FINISH (last 30&ndash;45 minutes)</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Sauce Base</p>
+        <ul class="ings">
+          <li>&frac12; cup molasses</li>
+          <li>&frac12; cup brown sugar &mdash; easy on the sugar</li>
+          <li>1 cup ketchup</li>
+          <li>&frac12; cup apple cider vinegar</li>
+          <li>2 tbsp stone ground mustard</li>
+          <li>1 tbsp Worcestershire sauce</li>
+          <li>1 tbsp hot sauce</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Spices</p>
+        <ul class="ings">
+          <li>1 tsp smoked paprika</li>
+          <li>&frac12; tsp cayenne</li>
+          <li>1 tsp black pepper</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Liquid</p>
+        <ul class="ings"><li>2 cups water or chicken stock</li></ul>
+      </div>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Render the bacon</p><p class="step-body">In a large heavy pot over medium heat, cook diced bacon until fat is rendered and bacon is lightly crispy. Do NOT drain &mdash; the bacon fat stays in the pot. It is the flavor base.</p></div>
+        <div class="step"><p class="step-title">Build the sauce</p><p class="step-body">Add &frac12; cup bourbon to the bacon and fat. Let sizzle and reduce 1 minute. Add ketchup, molasses, brown sugar, ACV, stone ground mustard, Worcestershire, hot sauce, paprika, cayenne, and black pepper. Stir to combine and bring to a gentle simmer.</p></div>
+        <div class="step"><p class="step-title">Add beans and liquid</p><p class="step-body">Add all drained rinsed beans. Add 2 cups water or stock &mdash; enough to make beans loose and saucy. They will thicken as they cook. Stir everything together well.</p></div>
+        <div class="step"><p class="step-title">Slow cook</p><p class="step-body">Transfer to slow cooker on LOW for 8 hours OR cover and bake at 300&deg;F for 3&ndash;4 hours. Stir occasionally. If too thick add a splash of water or stock.</p></div>
+        <div class="step"><p class="step-title">Finish &mdash; critical step</p><p class="step-body">In the last 30&ndash;45 minutes, stir in &frac14;&ndash;&frac12; cup bourbon. Taste to adjust. This finishing addition brings the bourbon forward without cooking it away.</p></div>
+        <div class="step"><p class="step-title">Taste and adjust</p><p class="step-body">Beans should eat: savory, tangy, lightly sweet &mdash; not heavy. Adjust with more ACV for tang, more brown sugar for sweetness, or hot sauce for heat.</p></div>
+        <div class="step"><p class="step-title">Hold and serve</p><p class="step-body">Transfer to chafing dish on LOW. Holds beautifully for 3&ndash;4 hours. Stir every 30&ndash;40 mins. If they tighten add a small splash of water and stir through.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Make the day before &mdash; beans improve significantly overnight. Reheat gently in chafing dish morning of event.</p>
+    <p class="note-item">Use REGULAR cut bacon NOT thick cut &mdash; it renders fat more completely and integrates better into the sauce.</p>
+    <p class="note-item">The two-stage bourbon addition gives depth without alcohol sharpness. Taste before the second addition.</p>
+  </div>
+</div>
+
+<!-- 02 BEER CHEESE -->
+<div class="recipe" id="recipe-r02">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 02 &nbsp;&middot;&nbsp; MAKE 1 DAY AHEAD &nbsp;&middot;&nbsp; MAKE 2 BATCHES SEPARATELY &nbsp;&middot;&nbsp; DO NOT DOUBLE</p>
+    <h2>Kentucky Beer Cheese</h2>
+    <p class="tagline">Warm sharp cheddar and cream cheese blended with craft beer, stone ground mustard, garlic, and cayenne &middot; a Louisville tavern classic</p>
+    <p class="serves">MAKES ~2 LBS PER BATCH &nbsp;&middot;&nbsp; MAKE 2 BATCHES &mdash; DO NOT DOUBLE &nbsp;&middot;&nbsp; SERVED WARM IN 10OZ CROCKS</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients &mdash; Per Batch</p>
+      <div class="ing-section">
+        <ul class="ings">
+          <li>8 oz cream cheese &mdash; block form, softened to room temperature</li>
+          <li>1 lb sharp cheddar &mdash; shredded fresh</li>
+          <li>12&ndash;16oz craft beer &mdash; amber ale or lager &middot; nothing too hoppy</li>
+          <li>3 tbsp butter</li>
+          <li>2 tbsp all-purpose flour</li>
+          <li>2 tbsp stone ground mustard</li>
+          <li>1 tbsp dijon mustard</li>
+          <li>1 tsp garlic &mdash; minced fresh</li>
+          <li>&frac12; tsp cayenne pepper</li>
+          <li>&frac12; tsp smoked paprika</li>
+          <li>&frac12; tsp black pepper</li>
+          <li>2 tsp Worcestershire sauce</li>
+          <li>1 tsp kosher salt &mdash; more if needed</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">For Serving</p>
+        <ul class="ings"><li>4&ndash;5 lbs soft pretzel bites &mdash; frozen reheat is perfectly fine</li></ul>
+      </div>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Make the roux</p><p class="step-body">In a medium saucepan over medium heat melt butter. Add flour and whisk together for 1&ndash;2 minutes until the raw flour smell cooks out and the mixture turns a light golden color.</p></div>
+        <div class="step"><p class="step-title">Add the beer</p><p class="step-body">Slowly pour in beer while whisking constantly. The mixture will bubble up &mdash; keep whisking until smooth. Bring to a gentle simmer. Add minced garlic and cook 1 minute.</p></div>
+        <div class="step"><p class="step-title">Add cream cheese</p><p class="step-body">Add softened cream cheese in chunks, whisking after each addition until fully melted and smooth.</p></div>
+        <div class="step"><p class="step-title">Add cheddar</p><p class="step-body">Reduce heat to LOW. Add shredded cheddar in three batches, whisking after each until fully melted before adding the next. Never rush this on high heat &mdash; cheddar added too fast will break and turn grainy.</p></div>
+        <div class="step"><p class="step-title">Season</p><p class="step-body">Add stone ground mustard, dijon, cayenne, smoked paprika, black pepper, and Worcestershire. Stir to combine. Taste &mdash; should be sharp, slightly bitter from the beer, warm from the cayenne, deeply cheesy.</p></div>
+        <div class="step"><p class="step-title">Adjust consistency</p><p class="step-body">If too thick add a splash of beer and stir through. Should coat a spoon but be loose enough to scoop easily. It tightens as it cools &mdash; err on the looser side.</p></div>
+        <div class="step"><p class="step-title">Refrigerate overnight</p><p class="step-body">Transfer to airtight container and refrigerate overnight. It improves significantly as it rests.</p></div>
+        <div class="step"><p class="step-title">Reheat day of</p><p class="step-body">Reheat gently in a small saucepan over LOW heat, stirring constantly. Add a splash of beer or water if it has tightened up. Transfer to a 10oz ceramic crock. Keep warm over a very small flame or chafing dish insert on LOW throughout service.</p></div>
+        <div class="step"><p class="step-title">Serve</p><p class="step-body">Place warm 10oz beer cheese crock alongside the pimento cheese crock on each board. Arrange soft pretzel bites alongside. Refill from a warm reserve pot in the kitchen as needed.</p></div>
+        <div class="step"><p class="step-title">Pretzel bites</p><p class="step-body">Reheat frozen pretzel bites in a 375&deg;F oven for 8&ndash;10 minutes until warm and slightly crispy. Do not microwave. Reheat in batches and keep warm covered with foil.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Make 2 batches &mdash; do NOT double the recipe. Make each batch separately for best results.</p>
+    <p class="note-item">Beer choice matters &mdash; use amber ale or lager. Avoid IPAs or heavily hopped beers &mdash; the bitterness amplifies as it cooks.</p>
+    <p class="note-item">If the sauce breaks (grainy or separated): remove from heat immediately, add a splash of cold beer, and whisk vigorously. Keep heat on LOW and never rush adding the cheese.</p>
+  </div>
+</div>
+
+<!-- 03 QUICK PICKLES -->
+<div class="recipe" id="recipe-r03">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 03 &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE</p>
+    <h2>Quick Pickles</h2>
+    <p class="tagline">Bright, tangy, and crisp &mdash; made the day before, best after a few hours</p>
+    <p class="serves">SERVES 12&ndash;15 BOLOGNA SANDWICHES &nbsp;&middot;&nbsp; CONDIMENT &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <ul class="ings">
+        <li>4 medium cucumbers &mdash; sliced thin, 1/8 inch rounds</li>
+        <li>1 small white onion &mdash; sliced paper thin</li>
+        <li>1.5 cups apple cider vinegar</li>
+        <li>&frac12; cup water</li>
+        <li>5 tbsp sugar</li>
+        <li>3 tsp salt</li>
+        <li>1 tsp black pepper &mdash; whole or cracked</li>
+        <li>2 tbsp mustard seeds</li>
+        <li>&frac12; tsp celery seed</li>
+        <li>&frac12; tsp red pepper flakes</li>
+      </ul>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Make the brine</p><p class="step-body">Combine ACV, water, sugar, salt, black pepper, celery seed, and red pepper flakes in a small saucepan. Bring to a boil, stirring until sugar and salt fully dissolve. Remove from heat and cool 10 minutes.</p></div>
+        <div class="step"><p class="step-title">Prep the vegetables</p><p class="step-body">Slice cucumbers into thin rounds &mdash; about 1/8 inch. Slice onion paper thin. Layer cucumbers and onion together in a clean jar or container.</p></div>
+        <div class="step"><p class="step-title">Pack and brine</p><p class="step-body">Pour warm brine over cucumbers and onion. Make sure everything is submerged. Weigh down with a small plate or zip lock bag filled with water if needed.</p></div>
+        <div class="step"><p class="step-title">Cool and refrigerate</p><p class="step-body">Let cool to room temperature uncovered &mdash; about 30 minutes. Cover and refrigerate overnight. Good after 2 hours but significantly better the next day.</p></div>
+        <div class="step"><p class="step-title">Serve</p><p class="step-body">Drain before serving. Arrange in a small ramekin or pile directly on the platter next to the fried bologna. Label with a small chalkboard card.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Make the day before &mdash; pickles improve overnight. These are a condiment not a featured item.</p>
+    <p class="note-item">Mustard seeds add a pleasant pop of texture and mild heat &mdash; do not skip them.</p>
+    <p class="note-item">The brine can be reused for a second batch if needed.</p>
+  </div>
+</div>
+
+<!-- 05 CANDIED BACON -->
+<div class="recipe" id="recipe-r05">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 05 &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE &nbsp;&middot;&nbsp; MAKE BEFORE DEVILED EGGS</p>
+    <h2>Candied Bacon Twists</h2>
+    <p class="tagline">Thick-cut bacon lacquered with brown sugar and cayenne &mdash; baked until glossy, served upright in mason jars</p>
+    <p class="serves">MAKES ~80&ndash;90 TWISTS &nbsp;&middot;&nbsp; ROOM TEMPERATURE STORAGE ONLY &nbsp;&middot;&nbsp; CRUMBLE SOME FOR DEVILED EGG VARIATION 1</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <ul class="ings">
+        <li>6.5 lbs thick-cut bacon</li>
+        <li>2 cups brown sugar</li>
+        <li>1 tsp kosher salt</li>
+        <li>1.5 tbsp cayenne pepper</li>
+        <li>2 tbsp cracked black pepper</li>
+        <li>3 tsp smoked paprika</li>
+        <li>&frac14; cup bourbon &mdash; optional but recommended</li>
+      </ul>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Preheat and prep</p><p class="step-body">Preheat oven to 375&deg;F. Line two large sheet pans with foil and place WIRE RACKS on top. The wire rack is non-negotiable &mdash; it lifts bacon off the pan so the glaze sets rather than pooling in fat.</p></div>
+        <div class="step"><p class="step-title">Make the glaze</p><p class="step-body">Combine brown sugar, salt, cayenne, black pepper, and smoked paprika in a bowl and mix well. If using bourbon stir it in. Mixture will be a loose damp sugar.</p></div>
+        <div class="step"><p class="step-title">Coat the bacon</p><p class="step-body">Working one strip at a time, press each strip firmly into the sugar mixture coating both sides generously. Do not be shy &mdash; the sugar forms the lacquer. Shake off excess that will not adhere.</p></div>
+        <div class="step"><p class="step-title">Twist and place</p><p class="step-body">Hold each coated strip at both ends and twist gently 2&ndash;3 times to form a loose spiral. Lay on wire rack with space between each. Do NOT overlap.</p></div>
+        <div class="step"><p class="step-title">Bake</p><p class="step-body">Bake at 375&deg;F for 20&ndash;25 minutes until deeply caramelized and glossy. Watch carefully after 18 minutes &mdash; sugar goes from perfect to burned quickly. Twists should look mahogany colored and glossy, not pale.</p></div>
+        <div class="step"><p class="step-title">Cool completely</p><p class="step-body">Remove from oven and let cool on rack at least 15 minutes before touching &mdash; sugar is molten hot and will burn. As it cools it hardens into a glassy candy coating. Do NOT stack while warm &mdash; they will stick together permanently.</p></div>
+        <div class="step"><p class="step-title">Reserve crumble for deviled eggs</p><p class="step-body">Once completely cool, crumble a small portion of the twists into rough pieces. Store separately in an airtight container at room temperature. This is the garnish for Deviled Egg Variation 1 (Recipe 04).</p></div>
+        <div class="step"><p class="step-title">Store and serve</p><p class="step-body">Store remaining twists in airtight container at ROOM TEMPERATURE. DO NOT REFRIGERATE &mdash; sugar absorbs moisture and goes sticky. Day of event stand twists upright in wide-mouth quart mason jars.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Make BEFORE the deviled eggs &mdash; Variation 1 requires candied bacon crumble as a garnish (Recipe 04).</p>
+    <p class="note-item">Keep at room temperature in airtight container &mdash; NEVER refrigerate. Sugar absorbs moisture and the twists go limp.</p>
+    <p class="note-item">Wire rack is essential &mdash; do not skip it. Work in oven batches if needed.</p>
+  </div>
+</div>
+
+<!-- 04 DEVILED EGGS -->
+<div class="recipe" id="recipe-r04">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 04 &nbsp;&middot;&nbsp; FILLING DAY BEFORE &nbsp;&middot;&nbsp; GARNISH MORNING OF EVENT &nbsp;&middot;&nbsp; REQUIRES CANDIED BACON FROM RECIPE 05</p>
+    <h2>Deviled Eggs Three Ways</h2>
+    <p class="tagline">Classic Southern deviled eggs &mdash; made the day before, garnished morning of event</p>
+    <p class="serves">180 HALVES FROM 90 WHOLE EGGS &nbsp;&middot;&nbsp; THREE VARIATIONS &nbsp;&middot;&nbsp; 60 HALVES PER VARIATION</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <div class="ing-section">
+        <ul class="ings">
+          <li>90 large eggs (buy 8 dozen &mdash; allows for cracking losses)</li>
+          <li>2 cups mayonnaise</li>
+          <li>&frac12; cup sour cream</li>
+          <li>4 tbsp dijon mustard</li>
+          <li>4 tbsp apple cider vinegar</li>
+          <li>2 tsp hot sauce</li>
+          <li>3 tsp salt</li>
+          <li>&frac12; tsp black pepper</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Variation 1 Topping &mdash; 60 halves</p>
+        <ul class="ings"><li>Candied bacon crumble (from Recipe 05) + smoked paprika dusting</li></ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Variation 2 Topping &mdash; 60 halves</p>
+        <ul class="ings"><li>Pickled jalape&ntilde;o slice + fresh chive</li></ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Variation 3 Topping &mdash; 60 halves</p>
+        <ul class="ings"><li>Whole grain mustard dot + fresh dill sprig</li></ul>
+      </div>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Hard boil the eggs</p><p class="step-body">Place eggs in large pot, cover with cold water by 1 inch. Bring to boil. Once boiling TURN OFF heat, cover, let sit exactly 12 minutes. Transfer immediately to ice bath for 15 minutes. Peel under cold running water.</p></div>
+        <div class="step"><p class="step-title">Halve and separate</p><p class="step-body">Slice each egg in half lengthwise. Pop yolks into large mixing bowl. Arrange whites on paper towel-lined sheet pans &mdash; must be completely dry or filling slides. Refrigerate whites while making filling.</p></div>
+        <div class="step"><p class="step-title">Make the filling</p><p class="step-body">Mash all yolks with fork until no lumps remain. Add mayonnaise, sour cream, dijon, ACV, hot sauce, salt, and black pepper. Mix until completely smooth. Taste &mdash; should be rich, tangy, well seasoned. Pipeable but not runny.</p></div>
+        <div class="step"><p class="step-title">Pipe and refrigerate</p><p class="step-body">Transfer filling to piping bag or zip lock bag with corner snipped. Pipe a generous rosette into each white half. Cover sheet pans tightly with plastic wrap and refrigerate overnight.</p></div>
+        <div class="step"><p class="step-title">Garnish morning of event</p><p class="step-body">Variation 1: candied bacon crumble + smoked paprika dusting. Variation 2: pickled jalape&ntilde;o slice + fresh chive. Variation 3: dot of whole grain mustard + small dill sprig.</p></div>
+        <div class="step"><p class="step-title">Plate and label</p><p class="step-body">Arrange on large round platters in three distinct sections &mdash; one variation per section. Label each with a small chalkboard card. Refrigerate until 20 minutes before service then bring to room temperature.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Make Recipe 05 (Candied Bacon Twists) BEFORE garnishing eggs &mdash; Variation 1 requires candied bacon crumble.</p>
+    <p class="note-item">Make filling the day before. Add garnishes MORNING OF EVENT ONLY &mdash; not the night before or they go soggy.</p>
+    <p class="note-item">Keep refrigerated until 20 minutes before service. Three distinct labeled sections on the platter so guests identify each variation.</p>
+  </div>
+</div>
+
+<!-- 06 PIEDMONT SLAW -->
+<div class="recipe" id="recipe-r06">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 06 &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE</p>
+    <h2>Lexington Piedmont Slaw</h2>
+    <p class="tagline">Finely chopped cabbage with ketchup and ACV &mdash; a condiment for the pulled pork slider, not a standalone side</p>
+    <p class="serves">SERVES 90 PULLED PORK SLIDERS AS A TOPPING &nbsp;&middot;&nbsp; SMALL BOWL ALONGSIDE CHAFING DISH &nbsp;&middot;&nbsp; MAKE THE DAY BEFORE</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <ul class="ings">
+        <li>1 medium head green cabbage &mdash; finely chopped</li>
+        <li>&frac12; small head red cabbage &mdash; finely chopped (optional &mdash; for color)</li>
+        <li>3&ndash;4 medium carrots &mdash; grated (optional)</li>
+        <li>&frac34; cup ketchup</li>
+        <li>&frac23; cup apple cider vinegar</li>
+        <li>3 tbsp sugar</li>
+        <li>1 tsp red pepper flakes</li>
+        <li>1 tsp hot sauce</li>
+        <li>2 tsp salt</li>
+        <li>&frac12; tsp black pepper</li>
+        <li>&frac12; tsp celery seed</li>
+      </ul>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Chop the cabbage</p><p class="step-body">Chop green and red cabbage very finely &mdash; this is NOT a shredded slaw. Use food processor pulsed 3&ndash;4 times per batch, box grater on coarse side, or sharp knife. Pieces should be roughly the size of a corn kernel. Do not over-process into mush.</p></div>
+        <div class="step"><p class="step-title">Salt and drain</p><p class="step-body">Toss chopped cabbage with 1 tsp salt in a large colander. Let sit 20 minutes &mdash; salt draws out excess water so the dressing does not get watery. After 20 minutes squeeze cabbage firmly with your hands to remove as much liquid as possible.</p></div>
+        <div class="step"><p class="step-title">Make the dressing</p><p class="step-body">Whisk together ketchup, ACV, sugar, red pepper flakes, hot sauce, black pepper, and celery seed until fully combined. Taste &mdash; should be tangy, slightly sweet, with background heat.</p></div>
+        <div class="step"><p class="step-title">Dress and rest</p><p class="step-body">Pour dressing over drained cabbage and toss thoroughly. The slaw will look lightly pink from the ketchup &mdash; this is correct and characteristic of Lexington style. Cover and refrigerate at least 2 hours. Overnight is better.</p></div>
+        <div class="step"><p class="step-title">Serve</p><p class="step-body">Taste before service. Should be tangy forward with mild heat &mdash; not sweet and not creamy. Serve in a small to medium bowl on the slider station alongside pulled pork chafing dish. Label: Lexington Piedmont Slaw.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">This slaw is a CONDIMENT not a side dish &mdash; portion the bowl accordingly. A medium bowl is right.</p>
+    <p class="note-item">The salting and draining step is critical &mdash; if cabbage is not properly drained the dressing gets watery within an hour on the table.</p>
+    <p class="note-item">Make the day before. Overnight refrigeration is significantly better than same-day.</p>
+  </div>
+</div>
+
+<!-- 07 PULLED PORK -->
+<div class="recipe" id="recipe-r07">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 07 &nbsp;&middot;&nbsp; SLOW COOK OVERNIGHT &nbsp;&middot;&nbsp; PULL MORNING OF EVENT</p>
+    <h2>Tangy Bourbon Pulled Pork</h2>
+    <p class="tagline">Pork shoulder slow-cooked overnight with bourbon, ACV, and a restrained hand on the sugar</p>
+    <p class="serves">SERVES ~90 SLIDERS (60 GUESTS) &nbsp;&middot;&nbsp; CHAFING DISH &nbsp;&middot;&nbsp; BUILD-YOUR-OWN SLIDER STATION WITH MARTIN'S ROLLS &amp; PIEDMONT SLAW</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <div class="ing-section">
+        <ul class="ings">
+          <li>28&ndash;30 lbs pork shoulder / Boston butt &mdash; bone-in preferred &mdash; 2&ndash;3 shoulders</li>
+          <li>3 cups apple cider vinegar</li>
+          <li>1 cup bourbon</li>
+          <li>&frac34; cup brown sugar &mdash; easy on the sugar</li>
+          <li>96 Martin&rsquo;s potato slider rolls for serving</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Dry Rub</p>
+        <ul class="ings">
+          <li>10 tbsp smoked paprika</li>
+          <li>6 tbsp kosher salt</li>
+          <li>6 tbsp black pepper</li>
+          <li>3 tbsp cayenne pepper</li>
+          <li>6 tbsp garlic powder</li>
+          <li>6 tbsp onion powder</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">Braising Liquid</p>
+        <ul class="ings">
+          <li>&frac34; cup hot sauce</li>
+          <li>2 cups water or chicken stock</li>
+          <li>3 tbsp stone ground mustard</li>
+          <li>&frac14; cup apple cider vinegar &mdash; finishing splash</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Make the dry rub</p><p class="step-body">Combine smoked paprika, kosher salt, black pepper, cayenne, garlic powder, and onion powder in a bowl. Mix well. Set brown sugar aside &mdash; it goes on separately.</p></div>
+        <div class="step"><p class="step-title">Rub the pork</p><p class="step-body">Pat pork shoulders completely dry. Score fat cap in crosshatch pattern 1 inch apart, 1/4 inch deep. Rub dry rub aggressively over every surface. Pat brown sugar over the rub. Wrap tightly in plastic wrap and refrigerate at least 2 hours or overnight.</p></div>
+        <div class="step"><p class="step-title">Make the braising liquid</p><p class="step-body">Whisk together apple cider vinegar, bourbon, stone ground mustard, hot sauce, and water or stock. Intentionally thin and acidic &mdash; it bastes the pork as it cooks and becomes part of the finishing sauce.</p></div>
+        <div class="step"><p class="step-title">Slow cook overnight</p><p class="step-body">Place pork in slow cookers or deep roasting pans. Pour braising liquid around pork &mdash; do not submerge. Cook LOW 10&ndash;12 hours overnight OR covered at 275&deg;F for 8&ndash;10 hours. Done when it falls apart at a fork touch &mdash; internal temp 200&ndash;205&deg;F.</p></div>
+        <div class="step"><p class="step-title">Pull the pork</p><p class="step-body">Remove pork and rest on cutting board 20 minutes. RESERVE ALL braising liquid &mdash; do not discard. Pull into long strands using two forks. Discard large fat pieces and bone.</p></div>
+        <div class="step"><p class="step-title">Finish and sauce</p><p class="step-body">Return pulled pork to large pot. Add reserved braising liquid gradually &mdash; start with half. Pork should be moist and saucy but not soupy. Add finishing ACV splash and stir. Taste and adjust &mdash; more ACV for tang, more hot sauce for heat.</p></div>
+        <div class="step"><p class="step-title">Hold and serve</p><p class="step-body">Transfer to chafing dish on LOW. Holds 4&ndash;5 hours. Stir every 30&ndash;40 mins. If it tightens add a splash of water. Stack Martin&rsquo;s rolls alongside. Set Piedmont slaw bowl next to chafing dish. Guests build their own sliders.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">Tangy forward not sweet &mdash; the ACV is the star. Bone-in shoulder has more flavor.</p>
+    <p class="note-item">29 lbs raw at 60% yield = ~17 lbs cooked, enough for 90 sliders at 3oz each.</p>
+    <p class="note-item">Seth needs 2&ndash;3 slow cookers running simultaneously overnight &mdash; one per shoulder.</p>
+  </div>
+</div>
+
+<!-- 08 CAJUN SHRIMP -->
+<div class="recipe" id="recipe-r08">
+  <div class="recipe-header">
+    <p class="recipe-number">RECIPE 08 &nbsp;&middot;&nbsp; REMOULADE DAY BEFORE &nbsp;&middot;&nbsp; SHRIMP DAY OF &nbsp;&middot;&nbsp; TWO WAVES</p>
+    <h2>Cajun Shrimp with House Remoulade</h2>
+    <p class="tagline">Gulf shrimp pan-seared in cajun brown butter &mdash; wide shallow bowl at room temperature &mdash; two batches</p>
+    <p class="serves">SERVES 60 GUESTS &nbsp;&middot;&nbsp; ORDER 21&ndash;25 COUNT SPECIFICALLY &nbsp;&middot;&nbsp; WAVE 1 AT 1:30 PM (4 LBS) &nbsp;&middot;&nbsp; WAVE 2 AT 2:30 PM (4 LBS)</p>
+  </div>
+  <div class="two-col">
+    <div>
+      <p class="sec-label">Ingredients</p>
+      <div class="ing-section">
+        <ul class="ings">
+          <li>8 lbs shrimp &mdash; ORDER 21&ndash;25 COUNT &mdash; peeled and deveined</li>
+          <li>10 tbsp cajun seasoning</li>
+          <li>2 tsp smoked paprika</li>
+          <li>3 tsp cayenne</li>
+          <li>3 tsp black pepper</li>
+          <li>3 tsp salt</li>
+          <li>2 tbsp brown sugar</li>
+          <li>10 tbsp butter</li>
+          <li>4 garlic cloves &mdash; minced</li>
+          <li>Zest of 1 whole lemon</li>
+          <li>Zest of 1 whole lime</li>
+          <li>2 lemons &mdash; juice of, plus wedges for serving</li>
+          <li>1 bunch flat-leaf parsley &mdash; roughly chopped</li>
+        </ul>
+      </div>
+      <div class="ing-section">
+        <p class="sub-label">House Remoulade &mdash; Make Day Before</p>
+        <ul class="ings">
+          <li>1 cup mayonnaise</li>
+          <li>3 tbsp dijon mustard</li>
+          <li>1 tbsp hot sauce</li>
+          <li>1 tsp Worcestershire sauce</li>
+          <li>1 garlic clove &mdash; minced</li>
+          <li>3 tbsp fresh lemon juice</li>
+          <li>2 tsp smoked paprika</li>
+          <li>2 tsp cajun seasoning</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p class="sec-label">Method</p>
+      <div class="steps">
+        <div class="step"><p class="step-title">Make remoulade &mdash; day before</p><p class="step-body">Whisk together all remoulade ingredients until smooth. Taste &mdash; should be tangy, slightly spicy, and rich. Cover and refrigerate overnight. It improves significantly as it sits.</p></div>
+        <div class="step"><p class="step-title">Season the shrimp</p><p class="step-body">Combine cajun seasoning, smoked paprika, cayenne, black pepper, salt, and brown sugar. Toss shrimp until well coated. Do this RIGHT BEFORE cooking &mdash; not hours ahead or salt draws out moisture.</p></div>
+        <div class="step"><p class="step-title">Make cajun brown butter</p><p class="step-body">Heat large heavy skillet or cast iron over HIGH heat until very hot. Add butter and let foam and begin to brown slightly. Add minced garlic and cook 30 seconds until fragrant. Brown butter &mdash; not burned butter.</p></div>
+        <div class="step"><p class="step-title">Sear the shrimp</p><p class="step-body">Add seasoned shrimp in a single layer &mdash; do NOT crowd the pan or they steam instead of sear. Cook 90 seconds per side. Done when they curl into a C shape and turn pink and opaque. DO NOT OVERCOOK &mdash; overcooked shrimp are rubbery.</p></div>
+        <div class="step"><p class="step-title">Finish with lemon and zest</p><p class="step-body">Remove pan from heat. Add lemon zest, lime zest, and squeeze lemon juice over shrimp and toss to coat. The lemon sizzles in hot butter and lifts all the fond. Taste one shrimp and adjust seasoning if needed.</p></div>
+        <div class="step"><p class="step-title">Plate and serve</p><p class="step-body">Transfer to wide shallow serving bowl. Scatter chopped parsley over top. Arrange lemon wedges around rim. Place remoulade in small ramekin alongside. Serve at ROOM TEMPERATURE &mdash; no chafing dish.</p></div>
+        <div class="step"><p class="step-title">Wave 2 at 2:30 PM</p><p class="step-body">WAVE 1 fires at 1:30 PM using 4 lbs. WAVE 2 fires at 2:30 PM using remaining 4 lbs. Refresh the serving bowl completely &mdash; do not pile Wave 2 on top of Wave 1 remnants. Fresh parsley garnish on Wave 2 too.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-box">
+    <p class="sec-label">Kitchen Notes</p>
+    <p class="note-item">ORDER 21&ndash;25 COUNT SPECIFICALLY. Fire in two batches of 4 lbs each &mdash; do not cook all 8 lbs at once.</p>
+    <p class="note-item">The cajun butter coating keeps shrimp moist and flavorful at room temp for 90 minutes &mdash; no chafing dish needed.</p>
+    <p class="note-item">Remoulade must be made the day before &mdash; it improves significantly overnight as flavors meld.</p>
+    <p class="note-item">Do not season shrimp hours ahead &mdash; the salt draws out moisture and results in steamed rather than seared shrimp.</p>
+  </div>
+</div>
+
+</div><!-- end recipes section -->
+</main>
+
+<footer>
+  <p>Fire Horse 2026 &nbsp;&middot;&nbsp; Wild Fierce Free &nbsp;&middot;&nbsp; Three Finger Jack&rsquo;s &nbsp;&middot;&nbsp; Winthrop, WA &nbsp;&middot;&nbsp; May 2, 2026</p>
+  <p>Questions? Abbey Bennett &nbsp;&middot;&nbsp; 206-713-1720 &nbsp;&middot;&nbsp; abbeylinh@gmail.com</p>
+</footer>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.top-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  el.classList.add('active');
+  var rNav = document.getElementById('recipe-nav');
+  rNav.classList.toggle('visible', id === 'recipes');
+  window.scrollTo({top:0, behavior:'smooth'});
+  return false;
+}
+function showRecipe(id, el) {
+  document.querySelectorAll('.recipe').forEach(r => r.classList.remove('active'));
+  document.querySelectorAll('.recipe-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('recipe-' + id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  return false;
+}
+</script>
+</body>
+</html>
 
